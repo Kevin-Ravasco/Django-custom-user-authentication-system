@@ -1,0 +1,26 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+
+<section class="signup">
+    <div class="container">
+        <div class="signup-content">
+            <h2 class="form-title">Create account</h2>
+            <form method="POST" id="signup-form" class="signup-form">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <input type="submit" name="submit" id="submit" class="form-submit" value="Sign up"/>
+                </div>
+            </form>
+            <p class="loginhere">
+                Have already an account ? <a href="{% url 'accounts:login' %}" class="loginhere-link">Login here</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

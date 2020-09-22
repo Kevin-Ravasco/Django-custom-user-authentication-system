@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="descriptison">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'home/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'home/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'home/css/navbar.css' %}" rel="stylesheet">
+  <link href="{% static 'home/css/style.css' %}" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- ======= Navbar Section ======= -->
+    <div class="container-fluid">
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <ul class="nav navbar-nav">
+            <li><a id="len1" class="hoverable" href="#">Home</a></li>
+            <li><a id="len2" class="hoverable" href="#">About</a></li>
+            <li><a id="len3" class="hoverable" href="#">Portfolio</a></li>
+            <li><a id="len4" class="hoverable" href="{% url 'accounts:logout' %}">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+  <main id="main">
+    <!-- ======= Portfolio Details Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-8">
+            <h2 class="portfolio-title">This is an example of portfolio detail</h2>
+            <div class="owl-carousel portfolio-details-carousel">
+              <img src="{% static 'home/img/portfolio/portfolio-details-1.jpg' %}" class="img-fluid" alt="">
+              <img src="{% static 'home/img/portfolio/portfolio-details-2.jpg' %}" class="img-fluid" alt="">
+              <img src="{% static 'home/img/portfolio/portfolio-details-3.jpg' %}" class="img-fluid" alt="">
+            </div>
+          </div>
+
+          <div class="col-lg-4 portfolio-info">
+            <h3>Project information</h3>
+            <ul>
+              <li><strong>Category</strong>: Web design</li>
+              <li><strong>Client</strong>: ASU Company</li>
+              <li><strong>Project date</strong>: 01 March, 2020</li>
+              <li><strong>Project URL</strong>: <a href="#">www.example.com</a></li>
+            </ul>
+
+            <p>
+              Autem ipsum nam porro corporis rerum. Quis eos dolorem eos itaque inventore commodi labore quia quia. Exercitationem repudiandae officiis neque suscipit non officia eaque itaque enim. Voluptatem officia accusantium nesciunt est omnis tempora consectetur dignissimos. Sequi nulla at esse enim cum deserunt eius.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Portfolio Details Section -->
+
+  </main><!-- End #main -->
+
+  <a href="#" class="back-to-top"><i class="bx bx-up-arrow-alt"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'home/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'home/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'home/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+  <script src="{% static 'home/vendor/counterup/counterup.min.js' %}"></script>
+  <script src="{% static 'home/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'home/js/main.js' %}"></script>
+  <script src="{% static 'home/js/navbar.js' %}"></script>
+
+</body>
+
+</html>
