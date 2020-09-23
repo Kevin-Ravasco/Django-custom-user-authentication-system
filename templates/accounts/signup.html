@@ -16,6 +16,9 @@
                     <input type="submit" name="submit" id="submit" class="form-submit" value="Sign up"/>
                 </div>
             </form>
+
+            {% include 'accounts/messages.html' %}
+
             <p class="loginhere">
                 Have already an account ? <a href="{% url 'accounts:login' %}" class="loginhere-link">Login here</a>
             </p>
