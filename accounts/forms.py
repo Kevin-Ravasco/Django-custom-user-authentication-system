@@ -32,7 +32,7 @@ class UserAdminCreationForm(forms.ModelForm):
 
 class UserAdminChangeForm(forms.ModelForm):
     ''' A form for updating users, includes all the fields on the user, but
-    repalces the password fields with admin's password hash display field. '''
+    replaces the password fields with admin's password hash display field. '''
 
     password = ReadOnlyPasswordHashField()
 
