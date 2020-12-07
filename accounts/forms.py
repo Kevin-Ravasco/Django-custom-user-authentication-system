@@ -15,7 +15,7 @@ class UserAdminCreationForm(forms.ModelForm):
         model = User
         fields = ('email',)
 
-    def clean_password2(self): # checking that the two passords match
+    def clean_password2(self): # checking that the two passwords match
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
         if password1 and password2 and password1 != password2:
