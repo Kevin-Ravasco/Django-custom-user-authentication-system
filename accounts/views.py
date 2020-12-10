@@ -88,7 +88,7 @@ def logout_view(request):
     logout(request)
     return redirect(reverse('accounts:login'))
 
-
+""" This is a dummy login view """
 @login_required
 def home(request):
     return render(request, 'index.html')
