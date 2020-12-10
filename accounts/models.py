@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
             raise ValueError('User must have a passwword')
         user_obj = self.model(email = self.normalize_email(email))
         user_obj.set_password(password)
-        user_obj.active = is_active
+        user_obj.is_active = is_active
         user_obj.admin = is_admin
         user_obj.staff = is_staff
         user_obj.save(using=self._db)
@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True, max_length=255)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -55,9 +55,9 @@ class User(AbstractBaseUser):
     def is_admin(self):
         return self.admin
 
-    @property
+    """@property
     def is_active(self):
-        return self.active
+        return self.is_active"""
 
 # keep the base user as simple as possible and only include the minimum basic required fields
 # you can extend this user using a profile to get more info about your users. e.g.

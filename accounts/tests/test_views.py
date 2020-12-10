@@ -73,7 +73,7 @@ class TestSignupView(TestCase):
 class TestActivateAccountView(TestCase):
     def setUp(self):
         self.User = get_user_model()
-        self.user = self.User.objects.create(email='testuser@gmail.com', password='password1', active=False)
+        self.user = self.User.objects.create(email='testuser@gmail.com', password='password1', is_active=False)
 
     def test_test_with_valid_token(self):
         uidb64 = urlsafe_base64_encode(force_bytes(self.user.id))

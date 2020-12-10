@@ -9,8 +9,8 @@ User = get_user_model()
 
 class UserAdmin(BaseUserAdmin):
     search_fields = ['email']
-    list_display = ['email', 'active', 'staff', 'admin', 'last_login', 'timestamp']
-    list_filter = ['active', 'staff',  'admin', 'last_login', 'timestamp']
+    list_display = ['email', 'is_active', 'staff', 'admin', 'last_login', 'timestamp']
+    list_filter = ['is_active', 'staff',  'admin']
     ordering = ['email']
     filter_horizontal = []
 
@@ -20,7 +20,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ()}), # if you have any personal info fields e.g. names, include them as strings in the empty tuple.
-        ('Permissions', {'fields': ('admin', 'staff', 'active')})
+        ('Permissions', {'fields': ('admin', 'staff', 'is_active')})
     )
     '''
     add_fieldsets is not a standard ModelAdmin attribute. UserAdmin overides get_fieldsets

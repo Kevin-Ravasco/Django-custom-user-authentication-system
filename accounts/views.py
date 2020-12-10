@@ -51,7 +51,7 @@ def activate_account_page(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
-        user.active = True
+        user.is_active = True
         user.save()
         messages.success(request, 'Thank you for confirming your email. You can now login.')
         return redirect(reverse('accounts:login'))

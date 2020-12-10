@@ -26,8 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # the custom user app
+    # custom user app
     'accounts',
+    # third party apps
+    'crispy_forms',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'  # changes the built-in user model to ours
@@ -120,7 +122,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 from django.urls import reverse_lazy
 LOGIN_URL = reverse_lazy('accounts:login')
 LOGOUT_REDIRECT_URL = LOGIN_URL
-LOGIN_REDIRECT_URL = reverse_lazy('accounts:home')
+LOGIN_REDIRECT_URL = reverse_lazy('accounts:home') # change this to your home page
 
 # email configuration for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

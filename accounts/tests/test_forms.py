@@ -22,12 +22,12 @@ class TestUserAdminCreationForm(TestCase):
 
 class TestUserAdminChangeForm(TestCase):
     def test_with_vailid_data(self):
-        data = {'email': 'testuser@gmail.com', 'password': 'password3', 'active': False, 'admin': False}
+        data = {'email': 'testuser@gmail.com', 'password': 'password3', 'is_active': False, 'admin': False}
         form = UserAdminChangeForm(data, initial={'password': 'password1'})
         self.assertTrue(form.is_valid())
 
     def test_with_no_email(self):
-        data = {'email': '', 'password': 'password3', 'active': False, 'admin': False}
+        data = {'email': '', 'password': 'password3', 'is_active': False, 'admin': False}
         form = UserAdminChangeForm(data, initial={'password': 'password1'})
         self.assertFalse(form.is_valid())
 
