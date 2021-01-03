@@ -1,3 +1,7 @@
+from smtplib import SMTPException
+from socket import gaierror
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -25,11 +29,17 @@ def signup_page(request):
             current_site = get_current_site(request)
             mail_subject = 'Activate your account'
             message = render_to_string('accounts/email_verification.html', {'user': user, 'domain': current_site.domain,
-                                                                   'uid': urlsafe_base64_encode(force_bytes(user.id)),
-                                                                   'token': account_activation_token.make_token(user)})
-            send_mail(mail_subject, message, '<youremail>', [to_email])
-            messages.success(request, 'We have sent you an activation link in your email. Please confirm your'
-                                      ' email to continue')
+                                                                            'uid': urlsafe_base64_encode(
+                                                                                force_bytes(user.id)),
+                                                                            'token': account_activation_token.make_token(
+                                                                                user)})
+            try:
+                send_mail(mail_subject, message, '<youremail>', [to_email])
+                messages.success(request, 'We have sent you an activation link in your email. Please confirm your'
+                                          ' email to continue')
+            except (ConnectionAbortedError, SMTPException, gaierror):
+                messages.error(request, 'An error occurred. Please ensure you have good internet connection and you have entered a valid email address')
+                user.delete()
         else:
             if form.errors:
                 for field in form:
@@ -54,10 +64,10 @@ def activate_account_page(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, 'Thank you for confirming your email. You can now login.')
-        return redirect(reverse('accounts:login'))
+        return redirect(settings.LOGIN_URL)
     else:
         messages.error(request, 'Activation link is invalid!')
-        return redirect(reverse('accounts:login'))
+        return redirect(settings.LOGIN_URL)
 
 
 @unauthenticated_user
@@ -71,7 +81,7 @@ def login_page(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect(reverse('accounts:home'))       # change expected_url in your project
+                return redirect(settings.LOGIN_REDIRECT_URL)  # change expected_url in your project
             else:
                 messages.error(request, 'Incorrect email or password')
         else:
@@ -86,9 +96,13 @@ def login_page(request):
 
 def logout_view(request):
     logout(request)
-    return redirect(reverse('accounts:login'))
+    return redirect(settings.LOGOUT_REDIRECT_URL)
 
-""" This is a dummy login view """
+
+""" 
+    This is a dummy login view
+    remove it from this app and use your own homeview
+"""
 @login_required
 def home(request):
     return render(request, 'index.html')

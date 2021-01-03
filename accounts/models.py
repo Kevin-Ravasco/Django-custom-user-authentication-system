@@ -6,10 +6,10 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None, is_staff=False, is_admin=False, is_active=True): # may look repetitive adding staff, admin and active status, but it simplifies the
                                                                                         # work when using create_staffuser() and create_superuser()
         if not email:
-            raise ValueError("User must have an email adderess")
+            raise ValueError("User must have an email address")
         if not password:
-            raise ValueError('User must have a passwword')
-        user_obj = self.model(email = self.normalize_email(email))
+            raise ValueError('User must have a password')
+        user_obj = self.model(email=self.normalize_email(email))
         user_obj.set_password(password)
         user_obj.is_active = is_active
         user_obj.admin = is_admin
@@ -42,9 +42,13 @@ class User(AbstractBaseUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
         return True
 
     @property
