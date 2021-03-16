@@ -15,15 +15,14 @@ the app is called accounts and has its templates in templates/accounts
 
 to change from the built in django user model, in settings.py we added:
 
-AUTH_USER_MODEL = 'accounts.User' # changes the built-in user model to ours
+AUTH_USER_MODEL = 'accounts.User' // changes the built-in user model to ours
 
 Note:
 Superuser account:
 email: admin@gmail.com
 pass: admin
 
-
-####Features Summary
+#### Features Summary
 1. Use email instead of username to authenticate
 2. Send user emails upon registration. During redistration, a user cannot log in until he/she confirms their email
 3. Brute force attack protection. A limit is set on maximum login attempts. When the attempts are exceeded, 
@@ -34,7 +33,7 @@ pass: admin
 4.Time limit after each login is also set in seconds to provide some space between successive login attempts
   This is set in settings.py as LOGIN_ATTEMPTS_TIME_LIMIT
 
-###Improvement.
+### Improvement.
 You can use a background process to send the auth emails. e.g. Celery.
 
 
