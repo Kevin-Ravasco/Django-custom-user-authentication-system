@@ -37,5 +37,5 @@ pass: admin
 You can use a background process to send the auth emails. e.g. Celery.
 
 
-###Testing
+### Testing
 Tests written in accounts/tests
