@@ -34,7 +34,7 @@ class User(AbstractBaseUser):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'  # this now over rides the username field and now email is the default field
-    # REQUIRED_FIELDS = [] if you add another field and need it to be required, include it in the listh
+    # REQUIRED_FIELDS = [] if you add another field and need it to be required, include it in the list
 
     objects = UserManager()
 
@@ -69,5 +69,17 @@ class User(AbstractBaseUser):
 #class Profile(models.Model):
     #user = models.OneToOneField(User)
     # then add some other fields e.g. first name, last name, phone number e.t.c.
+
+
+class LoginAttempt(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    login_attempts = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return 'user: {}, attempts: {}'.format(self.user.email, self.login_attempts)
+
+
+
 
 

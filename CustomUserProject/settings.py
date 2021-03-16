@@ -137,3 +137,7 @@ EMAIL_HOST_PASSWORD = 'yourpassword'
 EMAIL_PORT = 587
 
 '''
+# Time in seconds after each login attempts
+LOGIN_ATTEMPTS_TIME_LIMIT = 5
+# limit the amount of attempts to which the user will be inactive and password set mail sent
+MAX_LOGIN_ATTEMPTS = 5

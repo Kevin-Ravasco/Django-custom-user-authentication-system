@@ -1,21 +1,21 @@
-from smtplib import SMTPException
-from socket import gaierror
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils import timezone
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 from .forms import RegistrationForm, LoginForm
+from .models import LoginAttempt, User
 from .token import account_activation_token
 from .decorators import unauthenticated_user
+from .utils import send_user_email
 
 
 @unauthenticated_user
@@ -28,16 +28,11 @@ def signup_page(request):
             to_email = form.cleaned_data.get('email')
             current_site = get_current_site(request)
             mail_subject = 'Activate your account'
-            message = render_to_string('accounts/email_verification.html', {'user': user, 'domain': current_site.domain,
-                                                                            'uid': urlsafe_base64_encode(
-                                                                                force_bytes(user.id)),
-                                                                            'token': account_activation_token.make_token(
-                                                                                user)})
-            try:
-                send_mail(mail_subject, message, '<youremail>', [to_email])
+            response = send_user_email(user, mail_subject, to_email, current_site, 'accounts/email_verification.html')
+            if response == 'success':
                 messages.success(request, 'We have sent you an activation link in your email. Please confirm your'
                                           ' email to continue')
-            except (ConnectionAbortedError, SMTPException, gaierror):
+            else:
                 messages.error(request, 'An error occurred. Please ensure you have good internet connection and you have entered a valid email address')
                 user.delete()
         else:
@@ -53,6 +48,60 @@ def signup_page(request):
     return render(request, 'accounts/signup.html', context)
 
 
+@unauthenticated_user
+def login_page(request):
+    form = LoginForm()
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            now = timezone.now()
+            try:
+                _user = User.objects.get(email=email)
+                login_attempt, created = LoginAttempt.objects.get_or_create(user=_user)  # get the user's login attempt
+                user = authenticate(request, username=email, password=password)
+                if user is not None:
+                    # if (now - login_attempt.timestamp) > settings.LOGIN_ATTEMPTS_TIME_LIMIT:
+                    if (login_attempt.timestamp + timedelta(seconds=settings.LOGIN_ATTEMPTS_TIME_LIMIT)) < now:
+                        login(request, user)
+                        login_attempt.login_attempts = 0    # reset the login attempts
+                        # login_attempt.timestamp = now   # set the last login attempt to now
+                        login_attempt.save()
+                        return redirect(settings.LOGIN_REDIRECT_URL)  # change expected_url in your project
+                    else:
+                        messages.error(request, 'Login failed, please try again')
+                        return redirect(settings.LOGIN_URL)
+                else:
+                    # if the password is incorrect, increment the login attempts and
+                    # if the login attempts == MAX_LOGIN_ATTEMPTS, set the user to be inactive and send activation email
+                    login_attempt.login_attempts += 1
+                    login_attempt.timestamp = now
+                    login_attempt.save()
+                    if login_attempt.login_attempts == settings.MAX_LOGIN_ATTEMPTS:
+                        _user.is_active = False
+                        _user.save()
+                        # send the re-activation email
+                        mail_subject = "Account suspended"
+                        current_site = get_current_site(request)
+                        send_user_email(_user, mail_subject, email, current_site, 'accounts/email_account_suspended.html')
+                        messages.error(request, 'Account suspended, maximum login attempts exceeded. '
+                                                'Reactivation link has been sent to your email')
+                    else:
+                        messages.error(request, 'Incorrect email or password')
+                    return redirect(settings.LOGIN_URL)
+            except ObjectDoesNotExist:
+                messages.error(request, 'Incorrect email or password')
+                return redirect(settings.LOGIN_URL)
+        else:
+            if form.errors:
+                for field in form:
+                    for error in field.errors:
+                        messages.error(request, error)
+    context = {'form': form}
+    return render(request, 'accounts/login.html', context)
+
+
 def activate_account_page(request, uidb64, token):
     User = get_user_model()
     try:
@@ -63,35 +112,17 @@ def activate_account_page(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        messages.success(request, 'Thank you for confirming your email. You can now login.')
+        login_attempt, created = LoginAttempt.objects.get_or_create(user=user)
+        if login_attempt.login_attempts >= 5:
+            login_attempt.login_attempts = 0
+            login_attempt.save()
+            messages.success(request, 'Account restored, you can now proceed to login')
+        else:
+            messages.success(request, 'Thank you for confirming your email. You can now login.')
         return redirect(settings.LOGIN_URL)
     else:
         messages.error(request, 'Activation link is invalid!')
         return redirect(settings.LOGIN_URL)
-
-
-@unauthenticated_user
-def login_page(request):
-    form = LoginForm()
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect(settings.LOGIN_REDIRECT_URL)  # change expected_url in your project
-            else:
-                messages.error(request, 'Incorrect email or password')
-        else:
-            if form.errors:
-                for field in form:
-                    for error in field.errors:
-                        messages.error(request, error)
-
-    context = {'form': form}
-    return render(request, 'accounts/login.html', context)
 
 
 def logout_view(request):
@@ -103,6 +134,7 @@ def logout_view(request):
     This is a dummy login view
     remove it from this app and use your own homeview
 """
+
 @login_required
 def home(request):
     return render(request, 'index.html')

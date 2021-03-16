@@ -72,7 +72,7 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Passwords do not match')
         return password2
 
-    def save(self, commit=True): # save he proovided password in hashed format
+    def save(self, commit=True): # save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password1'])
         if commit:
