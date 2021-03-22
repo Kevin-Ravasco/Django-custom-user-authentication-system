@@ -128,16 +128,15 @@ LOGIN_REDIRECT_URL = reverse_lazy('accounts:home') # change this to your home pa
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # email configuration in production
-'''
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'youremail@gmail.com'
-EMAIL_HOST_PASSWORD = 'yourpassword'
-EMAIL_PORT = 587
 
-'''
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'youremail@gmail.com'
+# EMAIL_HOST_PASSWORD = 'yourpassword'
+# EMAIL_PORT = 587
+
 # Time in seconds after each login attempts
-LOGIN_ATTEMPTS_TIME_LIMIT = 5
+LOGIN_ATTEMPTS_TIME_LIMIT = 0
 # limit the amount of attempts to which the user will be inactive and password set mail sent
 MAX_LOGIN_ATTEMPTS = 5
